@@ -1,0 +1,35 @@
+venv/
+logs/
+airflow-webserver.pid
+airflow.cfg
+webserver_config.py
+.airflowignore
+.env
+config/
+plugins/__pycache__/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.log
+*.python-version
+
+
+# Database
+*.db
+*.zip
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+
+# downloaded files
+*.html
+*.xml

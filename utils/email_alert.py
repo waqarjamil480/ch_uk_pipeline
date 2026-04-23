@@ -34,6 +34,22 @@ load_dotenv(dotenv_path=_PROJECT_ROOT / ".env", override=False)
 logger = logging.getLogger(__name__)
 
 
+def _normalise_receiver(value) -> str:
+    """
+    Accept receiver_email in any format and return a clean comma-separated string.
+
+    Handles:
+      "you@example.com"                           → "you@example.com"
+      "you@example.com, other@example.com"        → "you@example.com, other@example.com"
+      ["you@example.com", "other@example.com"]    → "you@example.com, other@example.com"
+    """
+    if isinstance(value, list):
+        return ", ".join(v.strip() for v in value if v and v.strip())
+    if isinstance(value, str):
+        return value.strip()
+    return ""
+
+
 def _load_credentials():
     """Load SMTP credentials from Airflow connection, fallback to env vars."""
     try:
@@ -50,8 +66,10 @@ def _load_credentials():
             "smtp_port":       int(conn.port) if conn.port else 587,
             "sender_email":    (conn.login or "").strip(),
             "sender_password": (conn.password or "").strip(),
-            "receiver_email":  extra.get("receiver_email",
-                                         os.getenv("RECEIVER_EMAIL", "")).strip(),
+            "receiver_email":  _normalise_receiver(
+                                   extra.get("receiver_email",
+                                             os.getenv("RECEIVER_EMAIL", ""))
+                               ),
         }
     except Exception:
         return {
@@ -59,7 +77,7 @@ def _load_credentials():
             "smtp_port":       int(os.getenv("SMTP_PORT",   "587")),
             "sender_email":    os.getenv("SENDER_EMAIL",    "").strip(),
             "sender_password": os.getenv("SENDER_PASSWORD", "").strip(),
-            "receiver_email":  os.getenv("RECEIVER_EMAIL",  "").strip(),
+            "receiver_email":  _normalise_receiver(os.getenv("RECEIVER_EMAIL", "")),
         }
 
 

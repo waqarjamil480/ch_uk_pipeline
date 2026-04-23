@@ -37,7 +37,7 @@ from airflow import DAG
 from airflow.operators.python import PythonOperator
 
 # ── Project root — update this path to match your Docker volume mount ─────
-PROJECT_PATH = Path(os.getenv("CH_PIPELINE_PATH", "/opt/airflow/dags/ch_pipeline_airflow"))
+PROJECT_PATH = Path(os.getenv("CH_PIPELINE_PATH", "/opt/airflow/dags/ch_uk_pipeline"))
 
 logger = logging.getLogger(__name__)
 

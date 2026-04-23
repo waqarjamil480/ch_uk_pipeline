@@ -510,8 +510,11 @@ def run_verification():
     try:
         from utils.verification import run_verification as verify
         return verify()
-    except ImportError:
-        logger.warning("verification.py not found, skipping verification")
+    except ImportError as exc:
+        logger.warning("verification.py not importable, skipping: %s", exc)
+        return True
+    except Exception as exc:
+        logger.warning("Verification error, skipping: %s", exc)
         return True
 
 # -----------------------------

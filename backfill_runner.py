@@ -238,11 +238,21 @@ def download_zip(url: str, dest: Path) -> None:
 # ---------------------------------------------------------------------------
 
 def extract_zip(zip_path: Path, extract_to: Path) -> None:
-    """Extract ZIP into extract_to directory."""
+    """Extract ZIP into extract_to directory with progress logging."""
     import zipfile
     extract_to.mkdir(parents=True, exist_ok=True)
     with zipfile.ZipFile(zip_path, "r") as zf:
-        zf.extractall(extract_to)
+        members   = zf.infolist()
+        total     = len(members)
+        log_every = max(1, total // 10)
+        logger.info("    Extracting %d files ...", total)
+        for i, member in enumerate(members, 1):
+            zf.extract(member, extract_to)
+            if i % log_every == 0 or i == total:
+                logger.info(
+                    "    Extraction: %d / %d  (%d%%)",
+                    i, total, i * 100 // total,
+                )
     logger.info("    Extracted to: %s", extract_to)
 
 
